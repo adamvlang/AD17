@@ -1,6 +1,6 @@
 # Own ignores
 catkin_ws/*
-!src/*
+!src
 *.swp
 
 # Prerequisites

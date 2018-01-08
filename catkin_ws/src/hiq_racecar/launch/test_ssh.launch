@@ -1,0 +1,6 @@
+<launch>
+    <machine name="dev-kort" address="ad2017.asuscomm.com" user="nvidia" password="polestar2017"
+        env-loader="/opt/ros/lunar/env.sh" default="true"/>
+
+    <node name="talker" pkg="hiq_racecar" type="talker.py" respawn="true"/>
+</launch>

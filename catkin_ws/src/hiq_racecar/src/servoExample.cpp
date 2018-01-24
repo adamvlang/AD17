@@ -56,46 +56,32 @@ int map ( int x, int in_min, int in_max, int out_min, int out_max) {
 
 int main(int argc, char **argv) {
 
-    ros::init(argc, argv, "talker");
-
+    ros::init(argc, argv, "subscribe_and_publish");
     ros::NodeHandle n;
-
+    ros::Publisher pub_;
+    ros::Subscriber sub_;
     ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+    ros::Rate loop_rate(10);
 
-    PCA9685 *pca9685 = new PCA9685() ;
+    int count = 0;
+
+    PCA9685 *pca9685 = new PCA9685();
+
     int err = pca9685->openPCA9685();
     if (err < 0){
         printf("Error: %d", pca9685->error);
     } else {
         printf("PCA9685 Device Address: 0x%02X\n",pca9685->kI2CAddress) ;
-        pca9685->setAllPWM(0,0) ;
-        pca9685->reset() ;
+        pca9685->setAllPWM(0,0);
+        pca9685->reset();
         pca9685->setPWMFrequency(60) ;
-        // 27 is the ESC key
-        printf("Hit ESC key to exit\n");
-        while(pca9685->error >= 0 && getkey() != 27){
+        while(pca9685->error >= 0 && ros::ok()){
 
 	    // Make a circle
             pca9685->setPWM(servoChannel,0,servoRight) ;
             pca9685->setPWM(motorChannel,0,servoMinForwards) ;
-            sleep(circlePause) ;
-	    //pca9685->setPWM(servoChannel,0,servoRight);//map(90,0,180,servoFullBackwards, servoFullForwards)) 
-
-	    // Stand still
-            pca9685->setPWM(motorChannel,0,servoStandStill) ;
-	    sleep(5) ;
-
-	    // Make a circle in opposite direction
-	    pca9685->setPWM(servoChannel,0,servoLeft) ;
-            pca9685->setPWM(motorChannel,0,servoMinForwards) ;
-	    sleep(circlePause) ;
-
-	    // Stand still
-	    pca9685->setPWM(motorChannel,0,servoStandStill) ;
-	    sleep(5) ;
 
         }
-        sleep(1);
     }
     pca9685->closePCA9685();
 }

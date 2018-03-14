@@ -2,7 +2,7 @@
 import rospy
 from std_msgs.msg import String
 import sys, getopt
-sys.path.append('.')
+sys.path.append('~/ad17/catkin_ws/src/hiq_racecar/include/hiq_racecar/')
 import RTIMU
 import os.path
 import time

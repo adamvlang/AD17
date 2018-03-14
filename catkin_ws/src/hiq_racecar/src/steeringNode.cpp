@@ -16,8 +16,8 @@
 #define FREQUENCY 60
 #define IN_MIN -100
 #define IN_MAX 100
-#define MOTOR_FULL_BACKWARDS 249 //249
-#define MOTOR_FULL_FORWARDS 399 //512
+#define MOTOR_MAX_BACKWARDS 249 //249
+#define MOTOR_MAX_FORWARDS 399 //512
 #define MOTOR_MIN_FORWARDS 399 //399
 #define SERVO_RIGHT 261 //261
 #define SERVO_LEFT 520 //520 (524 was a bit too much)
@@ -29,11 +29,11 @@
 struct ValuesNormalized {
     int servoNormalized;
     int motorNormalized;
-}
+};
 
 class SteeringNode {
 
-	int currentServoNormalized, currentMotorNormalized;
+	int currentServoOutput, currentMotorOutput, currentServoNormalized, currentMotorNormalized;
 
 	int getkey() {
 		int character;
@@ -64,6 +64,7 @@ class SteeringNode {
 	}
 
 	ValuesNormalized parseToNormalizedValues(const std_msgs::String::ConstPtr& msg) {
+                std::string msgString = *msg;
 		std::string delimiter = ",";
 		std::string servoNormalized = msg.substr(0, msg.find(delimiter));
 		std::string motorNormalized = msg.substr(1, msg.find(delimiter));
@@ -85,22 +86,22 @@ class SteeringNode {
 
 		// Parse to struct with normalized values
 		valuesNormalized = parseToNormalizedValues(msg);
-		servoNormalized = normalizedValues.servoNormalized;
-		motorNormalized = normalizedValues.motorNormalized;
+		servoNormalized = valuesNormalized.servoNormalized;
+		motorNormalized = valuesNormalized.motorNormalized;
 		
 		// Update servo output if changed
-		if servoNormalized != currentServoNormalized {
+		if ( servoNormalized != currentServoNormalized ) {
 
-			servoOutput = map(servoNormalized, SERVO_MIN, SERVO_MAX);
+			servoOutput = map(servoNormalized, SERVO_LEFT, SERVO_RIGHT);
 			//pca9685->setPWM(SERVO_CHANNEL, 0, servoOutput);
 			ROS_INFO("Setting servo output to: %s", servoOutput);
 
 		}
 
 		// Update motor output if changed
-		if motorNormalized != currentMotorNormalized {
+		if ( motorNormalized != currentMotorNormalized ) {
 
-			motorOutput = map(motorNormalized, MOTOR_MIN, MOTOR_MIN);
+			motorOutput = map(motorNormalized, MOTOR_MAX_BACKWARDS, MOTOR_MAX_FORWARDS);
 			//pca9685->setPWM(MOTOR_CHANNEL, 0, motorOutput);
 			ROS_INFO("Setting motor output to: %s", motorOutput);
 
@@ -114,11 +115,11 @@ class SteeringNode {
 
 	}
 
-	int getCurrentServoOutput
+	int getCurrentServoOutput;
 
-} // end SteeringNode
+}; // end SteeringNode
 
-void main(int argc, char **argv) {
+int main(int argc, char **argv) {
 
 	PCA9685 *pca9685 = new PCA9685();
 
@@ -134,12 +135,12 @@ void main(int argc, char **argv) {
 	    pca9685->reset();
 	    pca9685->setPWMFrequency(FREQUENCY);
 
-		SteeringNode steeringNode = new SteeringNode();		
+		SteeringNode *steeringNode = new SteeringNode();		
 
 		// Initialize ROS stuff
 		ros::init(argc, argv, "steering_node");
 		ros::NodeHandle steering_node;
-		ros::Subscriber sub = steering_node.subscribe("steering_values", 1000, steeringNode::updateSteering);
+		ros::Subscriber sub = steering_node.subscribe("steering_values", 1000, SteeringNode::updateSteering);
 		ros::Rate loop_rate(LOOP_RATE);
 
 	    while(pca9685->error >= 0 && ros::ok()){

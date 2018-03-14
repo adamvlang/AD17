@@ -3,7 +3,7 @@
 #include <string.h>
 #include <termios.h>
 #include <time.h>
-#include <JHPWMPCA9685.h>
+#include "../include/hiq_racecar/JHPWMPCA9685.h"
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>

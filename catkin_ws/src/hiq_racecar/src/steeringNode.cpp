@@ -26,6 +26,8 @@
 // ROS constants
 #define LOOP_RATE 10
 
+PCA9685 *pca9685 = new PCA9685();
+
 struct ValuesNormalized {
     int servoNormalized;
     int motorNormalized;
@@ -64,13 +66,13 @@ class SteeringNode {
 	}
 
 	ValuesNormalized parseToNormalizedValues(const std_msgs::String::ConstPtr& msg) {
-                std::string msgString = *msg;
+                std::string msgString = msg->data.c_str();
 		std::string delimiter = ",";
-		std::string servoNormalized = msg.substr(0, msg.find(delimiter));
-		std::string motorNormalized = msg.substr(1, msg.find(delimiter));
+		std::string servoNormalized = msgString.substr(0, msgString.find(delimiter));
+		std::string motorNormalized = msgString.substr(msgString.find(delimiter) + 1, msgString.length());
 
-		ValuesNormalized valuesNormalized = {.servoNormalized = servoNormalized,
-											 .motorNormalized = motorNormalized};
+		ValuesNormalized valuesNormalized = {.servoNormalized = std::stoi(servoNormalized),
+						     .motorNormalized = std::stoi(motorNormalized)};
 
 		return valuesNormalized;
 	}
@@ -78,6 +80,7 @@ class SteeringNode {
 	public:
 
 	void updateSteering(const std_msgs::String::ConstPtr& msg) {
+		
 		//Debug?
 		ROS_INFO("I heard: [%s]", msg->data.c_str());
 
@@ -93,8 +96,7 @@ class SteeringNode {
 		if ( servoNormalized != currentServoNormalized ) {
 
 			servoOutput = map(servoNormalized, SERVO_LEFT, SERVO_RIGHT);
-			//pca9685->setPWM(SERVO_CHANNEL, 0, servoOutput);
-			ROS_INFO("Setting servo output to: %s", servoOutput);
+			pca9685->setPWM(SERVO_CHANNEL, 0, servoOutput);
 
 		}
 
@@ -103,7 +105,6 @@ class SteeringNode {
 
 			motorOutput = map(motorNormalized, MOTOR_MAX_BACKWARDS, MOTOR_MAX_FORWARDS);
 			//pca9685->setPWM(MOTOR_CHANNEL, 0, motorOutput);
-			ROS_INFO("Setting motor output to: %s", motorOutput);
 
 		}
 	}
@@ -120,8 +121,8 @@ class SteeringNode {
 }; // end SteeringNode
 
 int main(int argc, char **argv) {
-
-	PCA9685 *pca9685 = new PCA9685();
+	
+	SteeringNode *steeringNode = new SteeringNode();
 
 	int err = pca9685->openPCA9685();
 	if (err < 0){
@@ -140,7 +141,7 @@ int main(int argc, char **argv) {
 		// Initialize ROS stuff
 		ros::init(argc, argv, "steering_node");
 		ros::NodeHandle steering_node;
-		ros::Subscriber sub = steering_node.subscribe("steering_values", 1000, SteeringNode::updateSteering);
+		ros::Subscriber sub = steering_node.subscribe("steering_values", 1000, &SteeringNode::updateSteering, steeringNode);
 		ros::Rate loop_rate(LOOP_RATE);
 
 	    while(pca9685->error >= 0 && ros::ok()){

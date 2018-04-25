@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
+from sensor_msgs.msg import Imu, MagneticField
 import sys, getopt
 sys.path.append('~/ad17/catkin_ws/src/hiq_racecar/include/hiq_racecar/')
 import RTIMU
@@ -8,19 +9,19 @@ import os.path
 import time
 import math
 
-SETTINGS_FILE = "RTIMULib"
-
-import sys, getopt
-import RTIMU
-import os.path
-import time
-import math
+#SETTINGS_FILE = "RTIMULib"
 
 SETTINGS_FILE = "../include/hiq_racecar/RTIMULib"
 
 #Add supportfunctions here to read the values from the hardware
 
-def init_imu():
+def imu_publish():
+    imu_raw = Imu()
+    mag_raw = MagneticField()
+    pub_imu = rospy.Publisher('imu_data', Imu, queue_size = 1)
+    pub_mag = rospy.Publisher('mag_data', MagneticField, queue_size = 1)
+    rospy.init_node('imu_pub')
+    rate = rospy.Rate(10) # 1 Hz
     print("Using settings file " + SETTINGS_FILE + ".ini")
     
     if not os.path.exists(SETTINGS_FILE + ".ini"):
@@ -45,35 +46,36 @@ def init_imu():
     imu.setCompassEnable(True)
 
     poll_interval = imu.IMUGetPollInterval()
-    print("Recommended Poll Interval: %dmS\n" % poll_interval)
+    print("Recommended Poll Interval: %dmS\n" % poll_interval)   
     
-    return imu
+    acc_x, acc_y, acc_z = imu.getAccel()
+    gyro_x, gyro_y, gyro_z = imu.getGyro()
+    mag_x, mag_y, mag_z = imu.getCompass()
 
-def imu_publish():
-    pub = rospy.Publisher('imu_data', String, queue_size = 10)
-    rospy.init_node('imu_pub')
-    rate = rospy.Rate(1) # 1Hz
-    imu = init_imu()
-
-    while not rospy.is_shutdown():
-
-        #
-        #Make magic happen here, read gyros, run functons etc.
-        #
-        
+    while not rospy.is_shutdown():        
         # Get imu data
-        acc_x, acc_y, acc_z = imu.getAccel()
-        gyro_x, gyro_y, gyro_z = imu.getGyro()
-        mag_x, mag_y, mag_z = imu.getCompass()
-        
+	if imu.IMURead():        
+	    acc_x, acc_y, acc_z = imu.getAccel()
+            gyro_x, gyro_y, gyro_z = imu.getGyro()
+            mag_x, mag_y, mag_z = imu.getCompass()
+        	
+        imu_raw.linear_acceleration.x = acc_x
+        imu_raw.linear_acceleration.y = acc_y
+	imu_raw.linear_acceleration.z = acc_z
+
+        imu_raw.angular_velocity.x = gyro_x
+        imu_raw.angular_velocity.y = gyro_y
+        imu_raw.angular_velocity.z = gyro_z
+
+        mag_raw.magnetic_field.x = mag_x
+        mag_raw.magnetic_field.y = mag_y
+        mag_raw.magnetic_field.z = mag_z
+
         #Use loginfo for loggin data in order to find errors
         rospy.loginfo('Read imu data')
-
         #Use pub that was created above to publish the data list, string etc.
-        pub.publish('Acc: ' + acc_x + acc_y + acc_z + '\n' + 
-                    'Gyro: ' + gyro_x + gyro_y + gyro_z + '\n' +
-                    'Mag: ' + mag_x + mag_y + mag_z + '\n')
-
+        pub_imu.publish(imu_raw)
+        pub_mag.publish(mag_raw)
         #Sleep till next time add check to sleep only if que is empty?
         rate.sleep()
 

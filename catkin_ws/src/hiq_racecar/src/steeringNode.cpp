@@ -17,7 +17,7 @@
 #define IN_MIN -100
 #define IN_MAX 100
 #define MOTOR_MAX_BACKWARDS 249 //249
-#define MOTOR_MAX_FORWARDS 399 //512
+#define MOTOR_MAX_FORWARDS 512 //512
 #define MOTOR_MIN_FORWARDS 399 //399
 #define SERVO_RIGHT 261 //261
 #define SERVO_LEFT 520 //520 (524 was a bit too much)
@@ -104,7 +104,7 @@ class SteeringNode {
 		if ( motorNormalized != currentMotorNormalized ) {
 
 			motorOutput = map(motorNormalized, MOTOR_MAX_BACKWARDS, MOTOR_MAX_FORWARDS);
-			//pca9685->setPWM(MOTOR_CHANNEL, 0, motorOutput);
+			pca9685->setPWM(MOTOR_CHANNEL, 0, motorOutput);
 
 		}
 	}

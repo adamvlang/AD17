@@ -56,6 +56,10 @@ def imu_publish():
     rate = rospy.Rate(10) # 1 Hz
     
     imu = init_imu()
+	
+    acc_x, acc_y, acc_z = imu.getAccel()
+    gyro_x, gyro_y, gyro_z = imu.getGyro()
+    mag_x, mag_y, mag_z = imu.getCompass()
 
     while not rospy.is_shutdown():        
         # Get imu data
@@ -67,7 +71,7 @@ def imu_publish():
         	
         imu_raw.linear_acceleration.x = acc_x
         imu_raw.linear_acceleration.y = acc_y
-		imu_raw.linear_acceleration.z = acc_z
+	imu_raw.linear_acceleration.z = acc_z
 
         imu_raw.angular_velocity.x = gyro_x
         imu_raw.angular_velocity.y = gyro_y

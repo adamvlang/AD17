@@ -20,8 +20,11 @@ calibration_data = pickle.load(open("../include/hiq_racecar/calibration_data.p",
 matrix = calibration_data['camera_matrix']
 distortion_coef = calibration_data['distortion_coefficient']
 
-source_points = [(360, 450), (50, 700), (1200, 700), (950, 450)]
-destination_points = [(320, 0), (320, 720), (960, 720), (960, 0)]
+#source_points = [(360, 450), (50, 700), (1200, 700), (950, 450)]  # for 1280x720
+#destination_points = [(320, 0), (320, 720), (960, 720), (960, 0)] # for 1280x720
+source_points = [(180, 180), (0, 360), (640, 360), (460, 180)]  # for 640x360
+destination_points = [(160, 0), (160, 360), (480, 360), (480, 0)] # for 640x360
+
 
 p = { 'sat_thresh': 120, 'light_thresh': 40, 'light_thresh_agr': 205,
       'grad_thresh': (0.7, 1.4), 'mag_thresh': 40, 'x_thresh': 20 }
@@ -31,15 +34,34 @@ laneFilter = LaneFilter(p)
 curves = Curves(number_of_windows = 1, margin = 100, minimum_pixels = 50,
                 ym_per_pix = 30.0 / 720 , xm_per_pix = 3.7 / 700)
 
+bridge = CvBridge()
+
 # ROS Publisher
-pub_image = rospy.Publisher('/lane_image', Image, queue_size = 10)
-pub_values = rospy.Publisher('/lane_values', String, queue_size = 10)
+pub_image = rospy.Publisher('/lane_image', Image, queue_size = 1)
+pub_values = rospy.Publisher('/lane_values', String, queue_size = 1)
+pub_sky_view = rospy.Publisher('/sky_view', Image, queue_size = 1)
 
+import time
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        print '%r  %2.2f ms' % \
+                  (method.__name__, (te - ts) * 1000)
+        return result
+    return timed
 
+@timeit
 def pipeline(img):
     ground_img = birdsEye.undistort(img)
     binary = laneFilter.apply(ground_img)
+    
+    #skyView = birdsEye.sky_view(img, show_dotted = True)
+    #pub_sky_view.publish(bridge.cv2_to_imgmsg(skyView, "bgr8"))
+    
     wb = np.logical_and(birdsEye.sky_view(binary), roi(binary)).astype(np.uint8)
+    #pub_sky_view.publish(bridge.cv2_to_imgmsg(wb, "mono8"))
     result = curves.fit(wb)
     ground_img_with_projection = birdsEye.project(ground_img, binary,
                                                   result['pixel_left_best_fit_curve'],
@@ -56,7 +78,7 @@ def pipeline(img):
 
 
 def run_line_detection(image):
-    bridge = CvBridge()
+    #bridge = CvBridge()
     cv_image = bridge.imgmsg_to_cv2(image, "bgr8")
 
     return_image, position, radius_left, radius_right = pipeline(cv_image)

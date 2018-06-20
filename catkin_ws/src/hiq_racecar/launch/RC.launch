@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <node name="hiq_racecar_steering_node" pkg="hiq_racecar" type="hiq_racecar_steering_node"/>
+  <node name="joyToSteeringConverter" pkg="hiq_racecar" type="joyToSteeringConverter.py"/>
+  <node name="xbox_ctrl" pkg="joy" type="joy_node"/>
+</launch>

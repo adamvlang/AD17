@@ -10,17 +10,17 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 
 topic = "raw_camera" 
-
+frameRate = 4
 
 def camera_publish():
-	publisher = rospy.Publisher(topic, Image, queue_size= 10)
+	publisher = rospy.Publisher(topic, Image, queue_size= 1)
         print cv2.__version__
 	bridge = CvBridge()
 	rospy.init_node('camera', anonymous=True)
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(frameRate)
 	print('Hello from print')
 	rospy.loginfo('Hello')
-	cap = cv2.VideoCapture("nvcamerasrc ! video/x-raw(memory:NVMM), width=(int)1280, height=(int)720,format=(string)I420, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")	
+	cap = cv2.VideoCapture("nvcamerasrc ! video/x-raw(memory:NVMM), width=(int)640, height=(int)360,format=(string)I420, framerate=(fraction)" + str(frameRate) + "/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")	
 	#cap = cv2.VideoCapture("/dev/video0")
 	rospy.loginfo(cap)
 	rate.sleep()

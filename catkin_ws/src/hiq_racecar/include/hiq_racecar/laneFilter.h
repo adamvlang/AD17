@@ -28,6 +28,15 @@ private:
     double gradientThresholdHigh;
     int magnitudeThreshold;
     int xThreshold;
+    cv::Mat hls;
+    cv::Mat l;
+    cv::Mat s;
+    cv::Mat z;
+    cv::Mat colorCond1;
+    cv::Mat colorCond2;
+    cv::Mat sobelCond1;
+    cv::Mat sobelCond2;
+    cv::Mat sobelCond3;
 
     cv::Mat sobelBreakdown(cv::Mat image);
     cv::Mat colorBreakdown(cv::Mat image);

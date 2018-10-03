@@ -128,6 +128,17 @@ add_library(#${PROJECT_NAME}
   include/${PROJECT_NAME}/JHPWMPCA9685.cpp
 )
 
+add_library(#${PROJECT_NAME}
+#  src/${PROJECT_NAME}/hiq_racecar.cpp
+  ${PROJECT_NAME}_white_line_detecton_library
+  include/${PROJECT_NAME}/whiteLineDetector.cpp
+  include/${PROJECT_NAME}/birdsEye.cpp
+  include/${PROJECT_NAME}/chessboard.cpp
+  include/${PROJECT_NAME}/curves.cpp
+  include/${PROJECT_NAME}/helpers.cpp
+  include/${PROJECT_NAME}/laneFilter.cpp
+)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -138,6 +149,7 @@ add_library(#${PROJECT_NAME}
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/hiq_racecar_node.cpp)
 add_executable(${PROJECT_NAME}_steering_node src/steeringNode.cpp)
+add_executable(${PROJECT_NAME}_white_line_detecton_node src/whiteLineDetecton.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,6 +166,12 @@ target_link_libraries(#${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 ${PROJECT_NAME}_steering_node
 ${PROJECT_NAME}_steering_node_library
+${catkin_LIBRARIES}
+)
+target_link_libraries(#${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+${PROJECT_NAME}_white_line_detecton_node
+${PROJECT_NAME}_white_line_detecton_library
 ${catkin_LIBRARIES}
 )
 
@@ -173,6 +191,12 @@ ${catkin_LIBRARIES}
 
 ## Mark executables and/or libraries for installation
 install(TARGETS ${PROJECT_NAME}_steering_node #${PROJECT_NAME} ${PROJECT_NAME}_node
+  #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(TARGETS ${PROJECT_NAME}_white_line_detecton_node #${PROJECT_NAME} ${PROJECT_NAME}_node
   #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

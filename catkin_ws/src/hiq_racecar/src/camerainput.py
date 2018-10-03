@@ -10,7 +10,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 
 topic = "raw_camera" 
-frameRate = 4
+frameRate = 20
 
 def camera_publish():
 	publisher = rospy.Publisher(topic, Image, queue_size= 1)

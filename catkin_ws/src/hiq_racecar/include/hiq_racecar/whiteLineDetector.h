@@ -16,21 +16,15 @@
 #include "curves.h"
 #include "helpers.h"
 
-struct PipelineOutput {
-    cv_bridge::CvImagePtr image;
-    double position;
-    double radiusLeft;
-    double radiusRight;
-};
-
 class WhiteLineDetector {
     public:
-        PipeLineOutput pipeLine(cv_bridge::CvImagePtr image);
+        WhiteLineDetector();
+        PipelineOutput pipeLine(cv_bridge::CvImagePtr image);
     private:
         BirdsEye birdsEye;
         LaneFilter laneFilter;
         Curves curves;
         Helpers helpers;
-}
+};
 
-#endif _WHITE_LINE_DETECTOR_H
+#endif // _WHITE_LINE_DETECTOR_H

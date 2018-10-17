@@ -44,4 +44,4 @@ private:
     cv::Mat applySobelMask();
 };
 
-#endif _LANE_FILTER_H
+#endif // _LANE_FILTER_H

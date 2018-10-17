@@ -3,7 +3,7 @@
 cv::Mat Helpers::regionOfInterest(cv::Mat imageGray, int mn = 125, int mx = 1200) {
 	cv::Mat m(imageGray);
 	m += cv::Scalar(1);
-	m = m(Range::all(), Range(mn,mx));
+    m = m(cv::Range::all(), cv::Range(mn,mx));
 	return m;
 }
 

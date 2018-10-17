@@ -13,6 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+find_package(OpenCV REQUIRED
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -133,7 +136,6 @@ add_library(#${PROJECT_NAME}
   ${PROJECT_NAME}_white_line_detecton_library
   include/${PROJECT_NAME}/whiteLineDetector.cpp
   include/${PROJECT_NAME}/birdsEye.cpp
-  include/${PROJECT_NAME}/chessboard.cpp
   include/${PROJECT_NAME}/curves.cpp
   include/${PROJECT_NAME}/helpers.cpp
   include/${PROJECT_NAME}/laneFilter.cpp

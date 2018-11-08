@@ -16,10 +16,7 @@ struct PipelineOutput {
     double radiusRight;
 };
 
-class Helpers {
-    public:
-        cv::Mat regionOfInterest(cv::Mat imageBinary, int mn, int mx);
-
-};
+cv::Mat regionOfInterest(cv::Mat imageBinary, int mn, int mx);
+cv::Mat scaleAbs(cv::Mat x, int m = 255);
 
 #endif // _HELPERS_H

@@ -24,7 +24,6 @@ class WhiteLineDetector {
         BirdsEye birdsEye;
         LaneFilter laneFilter;
         Curves curves;
-        Helpers helpers;
 };
 
 #endif // _WHITE_LINE_DETECTOR_H

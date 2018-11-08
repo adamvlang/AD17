@@ -1,4 +1,8 @@
 #include "laneFilter.h"
+#include "helpers.h"
+#include <math.h>
+
+#define PI 3.14159265
 
 LaneFilter::LaneFilter(int saturationThreshold,
                        int lightThreshold,
@@ -15,6 +19,9 @@ LaneFilter::LaneFilter(int saturationThreshold,
     this->magnitudeThreshold = magnitudeThreshold;
     this->xThreshold = xThreshold;
 }
+
+LaneFilter::LaneFilter() {
+};
 
 cv::Mat LaneFilter::sobelBreakdown(cv::Mat image) {
     apply(image);
@@ -75,11 +82,53 @@ cv::Mat LaneFilter::apply(cv::Mat rgbImage) {
     return filteredImage;
 }
 
-// TODO: Continue here!!
 cv::Mat LaneFilter::applyColorMask() {
+    // Color cond 1
+    cv::Mat satThreshCompMat = s > saturationThreshold;
+    cv::Mat lightThreshCompMat = l > lightThreshold;
+    cv::bitwise_and(satThreshCompMat, lightThreshCompMat, colorCond1);
 
+    // Color cond 2
+    colorCond2 = l > lightThresholdArg;
+
+    // Compute b
+    cv::Mat colorCond1or2;
+    cv::bitwise_or(colorCond1, colorCond2, colorCond1or2);
+    cv::Mat b = z.clone();
+    b.setTo(1, colorCond1or2);
+
+    return b;
 }
 
 cv::Mat LaneFilter::applySobelMask() {
+    cv::Mat lx;
+    cv::Mat ly;
+    // cv::CV_64F = 6
+    cv::Sobel(l, lx, 6, 1, 0, 5);
+    cv::Sobel(l, ly, 6, 0, 1, 5);
 
+    // Temp clone lx and then compute the real values
+    cv::Mat gradL = lx.clone();
+    cv::Mat magL = lx.clone();
+    for (int col = 0; col < gradL.cols; col++) {
+        for (int row = 0; row < gradL.rows; row++) {
+            gradL.at<double>(row, col) = atan2(ly.at<double>(row, col), lx.at<double>(row, col)) * 180 / PI;
+            magL.at<double>(row, col) = pow(lx.at<double>(row, col), 2) + pow(ly.at<double>(row, col), 2);
+        }
+    }
+
+    cv::Mat slm = scaleAbs(magL);
+    cv::Mat slx = scaleAbs(lx);
+
+    cv::Mat b = z.clone();
+    sobelCond1 = slm > magnitudeThreshold;
+    sobelCond2 = slx > xThreshold;
+    cv::bitwise_and(gradL > gradientThresholdLow, gradL < gradientThresholdHigh, sobelCond3);
+
+    cv::Mat sobelCond1and2;
+    cv::Mat sobelCond1and2and3;
+    cv::bitwise_and(sobelCond1, sobelCond2, sobelCond1and2);
+    cv::bitwise_and(sobelCond1and2, sobelCond3, sobelCond1and2and3);
+    b.setTo(1, sobelCond1and2and3);
+    // TODO: Continue here
 }

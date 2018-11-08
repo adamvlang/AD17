@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV REQUIRED
 )
-
+message(${OpenCV}})
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -123,7 +123,7 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
-
+message(${catkin_INCLUDE_DIRS})
 ## Declare a C++ library
 add_library(#${PROJECT_NAME}
 #  src/${PROJECT_NAME}/hiq_racecar.cpp

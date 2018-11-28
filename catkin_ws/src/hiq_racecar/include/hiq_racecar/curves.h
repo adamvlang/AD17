@@ -9,13 +9,15 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/cudaarithm.hpp"
 
+#include "helpers.h"
+
 class Curves {
 public:
     Curves();
-    fit(cv::Mat binary);
+    CurvesResult fit(cv::Mat binary);
 
 private:
-    storeDetails(cv::Mat binary);
+    void storeDetails(cv::Mat binary);
 
 
     int minPix;
@@ -32,26 +34,24 @@ private:
     int windowHeight;
     int mid;
 
-    int[] allPixelsX;
-    int[] allPixelsY;
+    int allPixelsX[];
+    int allPixelsY[];
 
-    bool[] leftPixelsX;
-    bool[] rightPixelsX;
-    bool[] leftPixelsY;
-    bool[] rightPixelsY;
-    bool[] leftPixelIndices;
-    bool[] rightPixelIndices;
+    bool leftPixelsX[];
+    bool rightPixelsX[];
+    bool leftPixelsY[];
+    bool rightPixelsY[];
+    bool leftPixelIndices[];
+    bool rightPixelIndices[];
 
-    double[] leftFitCurvePix;
-    double[] rightFitCurvePix;
-    double[] leftFitCurveF;
-    double[] rightFitCurveF;
+    double leftFitCurvePix[];
+    double rightFitCurvePix[];
+    double leftFitCurveF[];
+    double rightFitCurveF[];
 
     double leftRadius;
     double rightRadius;
     double vehiclePosition;
-
-    CurvesResult result;
 };
 
 #endif // _CURVES_H

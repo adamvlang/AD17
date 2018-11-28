@@ -16,6 +16,17 @@ struct PipelineOutput {
     double radiusRight;
 };
 
+struct CurvesResult {
+    cv::Mat image;
+    double leftRadius;
+    double rightRadius;
+    double leftFitCurvePix[];
+    double rightFitCurvePix[];
+    double leftFitCurveF[];
+    double rightFitCurveF[];
+    double vehiclePosition;
+};
+
 cv::Mat regionOfInterest(cv::Mat imageBinary, int mn, int mx);
 cv::Mat scaleAbs(cv::Mat x, int m = 255);
 

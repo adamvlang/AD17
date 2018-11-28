@@ -1,4 +1,4 @@
-#include "BirdsEye.h"
+#include "birdsEye.h"
 #include <boost/format.hpp>
 
 using namespace cv;

@@ -35,7 +35,6 @@ WhiteLineDetector::WhiteLineDetector() {
     double ymPerPixel = 30.0 / 720;
     double xmPerPixel = 3.7 / 720;
     //TODO: curves = TODO: Curves(numberOfWindows, margin, minimumPixels, ymPerPixel, xmPerPixel);
-
 }
 
 PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
@@ -44,12 +43,14 @@ PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
 }
 
 PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat imageRaw) {
-//    TODO
 //    cv::Mat imageGround = birdsEye.undistort(imageRaw);
 
     cv::Mat imageBinary = laneFilter.apply(imageRaw);
+//    TODO
 //    cv::Mat imageBinary = laneFilter.apply(imageGround);
-//    cv::Mat imageWb = birdsEye.skyView(imageBinary) && helper::regionOfInterest(imageBinary);
+    cv::Mat imageWb = cv::Mat::zeros(imageBinary.size(), imageBinary.type());
+    birdsEye.skyView(imageBinary, &imageWb);
+    imageWb = imageWb && regionOfInterest(imageBinary);
 //    Curves::CurvesFitOutput result = curves->fit(imageWb);
 //    cv::Mat imageGroundWithProjection = birdsEye.project(groundImage, imageBinary);
 
@@ -72,7 +73,7 @@ PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat imageRaw) {
 
 //    return output;
 
-    PipelineOutput output = {imageRaw,
+    PipelineOutput output = {imageBinary,
                              0,
                              0,
                              0};

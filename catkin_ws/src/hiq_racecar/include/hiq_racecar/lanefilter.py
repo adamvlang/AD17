@@ -52,6 +52,7 @@ class LaneFilter:
   @timeit
   def apply_color_mask(self):   
     self.color_cond1 = (self.s > self.sat_thresh) & (self.l > self.light_thresh)
+    print(self.color_cond1)
     self.color_cond2 = self.l > self.light_thresh_agr
     b = self.z.copy()
     b[(self.color_cond1 | self.color_cond2)] = 1

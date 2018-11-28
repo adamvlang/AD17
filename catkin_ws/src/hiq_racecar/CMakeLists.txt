@@ -13,9 +13,20 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-find_package(OpenCV REQUIRED
+#set(OpenCV_LIBS
+#/usr/local/lib/libopencv_calib3d.so
+#/usr/local/lib/libopencv_core.so
+#)
+
+find_package(OpenCV REQUIRED NO_MODULE PATHS /usr/local/include/opencv2/ NO_DEFAULT_PATH
 )
-message(${OpenCV}})
+message(${OpenCV_VERSION})
+
+set(OpenCV_INCLUDE_DIRS
+/usr/local/include/opencv2
+/usr/local/include/opencv
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -120,16 +131,20 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
 )
-message(${catkin_INCLUDE_DIRS})
+message("test")
+message(${OpenCV_INCLUDE_DIRS})
 ## Declare a C++ library
 add_library(#${PROJECT_NAME}
 #  src/${PROJECT_NAME}/hiq_racecar.cpp
   ${PROJECT_NAME}_steering_node_library
   include/${PROJECT_NAME}/JHPWMPCA9685.cpp
 )
+
+message("-----------New Line----------")
+message(${OpenCV_LIBS})
 
 add_library(#${PROJECT_NAME}
 #  src/${PROJECT_NAME}/hiq_racecar.cpp
@@ -140,6 +155,10 @@ add_library(#${PROJECT_NAME}
   include/${PROJECT_NAME}/helpers.cpp
   include/${PROJECT_NAME}/laneFilter.cpp
 )
+
+#include_directories(
+#/usr/local/include/opencv2
+#)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -175,6 +194,7 @@ target_link_libraries(#${PROJECT_NAME}_node
 ${PROJECT_NAME}_white_line_detecton_node
 ${PROJECT_NAME}_white_line_detecton_library
 ${catkin_LIBRARIES}
+${OpenCV_LIBS}
 )
 
 #############

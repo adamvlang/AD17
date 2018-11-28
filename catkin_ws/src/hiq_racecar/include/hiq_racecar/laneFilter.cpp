@@ -71,8 +71,6 @@ cv::Mat LaneFilter::apply(cv::Mat rgbImage) {
     s = hlsSplit[2];
     z = s.clone();
     z.setTo(cv::Scalar::all(0));
-    //z = cv::Mat::all(0); // Found at https://stackoverflow.com/questions/17041758/how-to-fill-matrix-with-zeros-in-opencv
-                         // No clue if it works
 
     cv::Mat colorImage = applyColorMask();
     cv::Mat sobelImage = applySobelMask();
@@ -130,5 +128,6 @@ cv::Mat LaneFilter::applySobelMask() {
     cv::bitwise_and(sobelCond1, sobelCond2, sobelCond1and2);
     cv::bitwise_and(sobelCond1and2, sobelCond3, sobelCond1and2and3);
     b.setTo(1, sobelCond1and2and3);
-    // TODO: Continue here
+
+    return b;
 }

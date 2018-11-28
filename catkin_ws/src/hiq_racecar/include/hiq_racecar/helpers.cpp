@@ -17,8 +17,6 @@ def roi(gray, mn = 125, mx = 1200):
 
 cv::Mat scaleAbs(cv::Mat x, int m) {
 
-    // TODO: But first continue here. Does this really work?
-
     double maxValue = 0;
     for (int col = 0; col < x.cols; col++) {
         for (int row = 0; row < x.rows; row++) {

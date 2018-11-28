@@ -19,7 +19,8 @@
 class WhiteLineDetector {
     public:
         WhiteLineDetector();
-        PipelineOutput pipeLine(cv_bridge::CvImagePtr image);
+        PipelineOutput pipeLine(cv_bridge::CvImagePtr imagePtr);
+        PipelineOutput pipeLineWithImage(cv::Mat imageRaw);
     private:
         BirdsEye birdsEye;
         LaneFilter laneFilter;

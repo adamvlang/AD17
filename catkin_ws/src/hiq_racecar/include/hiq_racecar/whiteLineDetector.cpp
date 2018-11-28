@@ -38,10 +38,16 @@ WhiteLineDetector::WhiteLineDetector() {
 
 }
 
-PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr image) {
+PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
+    cv::Mat imageRaw = imagePtr->image;
+    return pipeLineWithImage(imageRaw);
+}
+
+PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat imageRaw) {
 //    TODO
-//    cv::Mat imageRaw = image->image;
 //    cv::Mat imageGround = birdsEye.undistort(imageRaw);
+
+    cv::Mat imageBinary = laneFilter.apply(imageRaw);
 //    cv::Mat imageBinary = laneFilter.apply(imageGround);
 //    cv::Mat imageWb = birdsEye.skyView(imageBinary) && helper::regionOfInterest(imageBinary);
 //    Curves::CurvesFitOutput result = curves->fit(imageWb);
@@ -66,7 +72,7 @@ PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr image) {
 
 //    return output;
 
-    PipelineOutput output = {image,
+    PipelineOutput output = {imageRaw,
                              0,
                              0,
                              0};

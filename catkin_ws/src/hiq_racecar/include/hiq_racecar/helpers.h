@@ -10,7 +10,7 @@
 #include <cv_bridge/cv_bridge.h>
 
 struct PipelineOutput {
-    cv_bridge::CvImagePtr image;
+    cv::Mat image;
     double position;
     double radiusLeft;
     double radiusRight;

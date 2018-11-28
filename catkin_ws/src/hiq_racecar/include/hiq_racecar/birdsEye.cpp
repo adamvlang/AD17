@@ -17,6 +17,9 @@ BirdsEye::BirdsEye(Point2f sourcepoints_l[], Point2f destpoints_l[], Mat camMatr
     this->invWarpMatrix = getPerspectiveTransform(this->srcPoints, this->destPoints);
 }
 
+BirdsEye::BirdsEye(){
+}
+
 BirdsEye::~BirdsEye(){
 }
 

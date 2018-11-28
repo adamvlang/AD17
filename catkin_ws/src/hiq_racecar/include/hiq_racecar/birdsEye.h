@@ -11,6 +11,7 @@ class BirdsEye
 public:
 
     BirdsEye(cv::Point2f sourcePoints[], cv::Point2f destPoints[], cv::Mat, double);
+	BirdsEye();
     ~BirdsEye();
 	cv::Point2f srcPoints[4];
 	cv::Point2f destPoints[4];

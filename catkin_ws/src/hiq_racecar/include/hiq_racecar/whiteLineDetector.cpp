@@ -2,21 +2,21 @@
 
 WhiteLineDetector::WhiteLineDetector() {
     cv::Point2f sourcePoints[4];
-    sourcePoints[0] = cv::Point2f(180, 180);
-    sourcePoints[1] = cv::Point2f(0, 360);
-    sourcePoints[2] = cv::Point2f(640, 340);
-    sourcePoints[3] = cv::Point2f(460, 180);
+    sourcePoints[0] = cv::Point2f( 360, 450 );
+    sourcePoints[1] = cv::Point2f(50, 700);
+    sourcePoints[2] = cv::Point2f( 1200 , 700);
+    sourcePoints[3] = cv::Point2f( 950 , 450);
 
     cv::Point2f destinationPoints[4];
-    destinationPoints[0] = cv::Point2f(160, 0);
-    destinationPoints[1] = cv::Point2f(160, 360);
-    destinationPoints[2] = cv::Point2f(48, 360);
-    destinationPoints[3] = cv::Point2f(480, 0);
+    destinationPoints[0] = cv::Point2f( 320, 0);
+    destinationPoints[1] = cv::Point2f( 320 , 720);
+    destinationPoints[2] = cv::Point2f( 960, 720);
+    destinationPoints[3] = cv::Point2f( 960, 0);
 
     // TODO: Load calibration data with "pickle" and extract calibration matrix and distortion coef 
     cv::Mat cameraMatrix = cv::Mat();
     double distortionCoefficient = 0.1;
-    // TODO: birdsEye = BirdsEye(sourcePoints, destinationPoints, cameraMatrix, distortionCoefficient);
+    birdsEye = BirdsEye(sourcePoints, destinationPoints, cameraMatrix, distortionCoefficient);
 
     int saturationThreshold = 120;
     int lightThreshold = 40;
@@ -37,20 +37,25 @@ WhiteLineDetector::WhiteLineDetector() {
     //TODO: curves = TODO: Curves(numberOfWindows, margin, minimumPixels, ymPerPixel, xmPerPixel);
 }
 
-PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
-    cv::Mat imageRaw = imagePtr->image;
-    return pipeLineWithImage(imageRaw);
-}
 
-PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat imageRaw) {
-//    cv::Mat imageGround = birdsEye.undistort(imageRaw);
-
-    cv::Mat imageBinary = laneFilter.apply(imageRaw);
+PipelineOutput WhiteLineDetector::pipeLine(cv::Mat source_image) {
 //    TODO
-//    cv::Mat imageBinary = laneFilter.apply(imageGround);
-    cv::Mat imageWb = cv::Mat::zeros(imageBinary.size(), imageBinary.type());
-    birdsEye.skyView(imageBinary, &imageWb);
-    imageWb = imageWb && regionOfInterest(imageBinary);
+//    cv::Mat imageRaw = image->image;
+      cv::Mat skyViewImage = cv::Mat::zeros(source_image.size(), source_image.type());
+      //birdsEye.undistort_image(&source_image, &undistortedImage);
+      //cv::imshow("Undistorted", undistortedImage);
+      //cv::waitKey(0);
+      cv::imshow("Source image", source_image);
+      cv::waitKey(0);
+      cv::Mat imageBinary = laneFilter.apply(source_image);
+      cv::imshow("Lane filter", imageBinary);
+      cv::waitKey(0);
+      birdsEye.skyView(imageBinary, &skyViewImage);
+      cv::imshow("Sky view", skyViewImage);
+      cv::waitKey(0);
+      cv::Mat imageWb = skyViewImage & regionOfInterest(imageBinary, 125, 1200);
+      cv::imshow("imageWB", imageWb);
+      cv::waitKey(0);
 //    Curves::CurvesFitOutput result = curves->fit(imageWb);
 //    cv::Mat imageGroundWithProjection = birdsEye.project(groundImage, imageBinary);
 
@@ -73,7 +78,8 @@ PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat imageRaw) {
 
 //    return output;
 
-    PipelineOutput output = {imageBinary,
+
+PipelineOutput output = {source_image,
                              0,
                              0,
                              0};

@@ -2,10 +2,10 @@
 
 WhiteLineDetector::WhiteLineDetector() {
     cv::Point2f sourcePoints[4];
-    sourcePoints[0] = cv::Point2f( 360, 450 );
-    sourcePoints[1] = cv::Point2f(50, 700);
-    sourcePoints[2] = cv::Point2f( 1200 , 700);
-    sourcePoints[3] = cv::Point2f( 950 , 450);
+    sourcePoints[0] = cv::Point2f( 580, 460 );
+    sourcePoints[1] = cv::Point2f( 205, 720);
+    sourcePoints[2] = cv::Point2f( 1110 , 720);
+    sourcePoints[3] = cv::Point2f( 703 , 460);
 
     cv::Point2f destinationPoints[4];
     destinationPoints[0] = cv::Point2f( 320, 0);
@@ -38,7 +38,13 @@ WhiteLineDetector::WhiteLineDetector() {
 }
 
 
-PipelineOutput WhiteLineDetector::pipeLine(cv::Mat source_image) {
+PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
+     cv::Mat imageRaw = imagePtr->image;
+     return pipeLineWithImage(imageRaw);
+}
+
+
+PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat source_image) {
 //    TODO
 //    cv::Mat imageRaw = image->image;
       cv::Mat skyViewImage = cv::Mat::zeros(source_image.size(), source_image.type());

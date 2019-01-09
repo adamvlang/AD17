@@ -5,6 +5,8 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/cudaarithm.hpp"
 
+// TODO: Make ros happen here
+
 int main() {
     cv::Mat warpedImage = cv::imread("/home/polestar/", CV_LOAD_IMAGE_COLOR);
 

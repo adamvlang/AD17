@@ -21,12 +21,11 @@ Curves::Curves() {
         covertPointToArray(locations, this->allPixelsX, this->allPixelsY);
     }
     
-    void Curves::covertPointToArray(locations, allPixelsX, allPixelsY){
+    void Curves::covertPointToArray(vector<Point> locations, int[] allPixelsX, int[] allPixelsY){
         int count = locations.size;
         int pixelsX[count] = {0};
         int pixelsY[count] = {0};
-        for(int i = 0; i < count; i++)
-        {
+        for(int i = 0; i < count; i++) {
             cv::Point point = locations[i];
             pixelsX[i] = point.x;
             pixelsY[i] = point.y;

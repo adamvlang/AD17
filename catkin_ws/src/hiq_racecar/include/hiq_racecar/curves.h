@@ -14,6 +14,11 @@
 class Curves {
 public:
     Curves();
+    Curves(int numberOfWindows,
+           double margin,
+           int minPix,
+           double ymPerPixel,
+           double xmPerPixel);
     CurvesResult fit(cv::Mat binary);
 
 private:
@@ -22,7 +27,7 @@ private:
     void nextY(const int w, int *lowY, int *highY);
     void nextX(const int current, int *leftX, int rightX);
     void nextMidX(const int pixelIndices[], int *current);
-    void drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const Scalar& color, int thickness = 5);
+    void drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness = 5);
     void indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat);
     void pixelLocations(const int indices[], int allPixelsX[], int allPixelsY[]);
     void plot(int t = 4);
@@ -51,8 +56,6 @@ private:
     bool rightPixelsX[];
     bool leftPixelsY[];
     bool rightPixelsY[];
-    bool leftPixelIndices[];
-    bool rightPixelIndices[];
 
     double leftFitCurvePix[];
     double rightFitCurvePix[];

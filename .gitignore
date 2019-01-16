@@ -2,6 +2,7 @@
 catkin_ws/*
 !src
 *.swp
+.DS_Store
 
 # Prerequisites
 *.d

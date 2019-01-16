@@ -29,6 +29,7 @@ private:
     void getRealCurvature(const int xs[], const int ys[], double coefficients[]);
     void radiusOfCurvature(const double y, const double coefficients[], double *radius);
     void updateVehiclePosition(double *vehiclePosition);
+    void covertPointToArray(vector<Point>, int[], int[]);
 
     int minPix;
     double margin;

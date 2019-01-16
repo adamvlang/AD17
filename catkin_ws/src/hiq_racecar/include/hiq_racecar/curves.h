@@ -11,6 +11,8 @@
 
 #include "helpers.h"
 
+using namespace std;
+
 class Curves {
 public:
     Curves();
@@ -34,6 +36,7 @@ private:
     void getRealCurvature(const int xs[], const int ys[], double coefficients[]);
     void radiusOfCurvature(const double y, const double coefficients[], double *radius);
     void updateVehiclePosition(double *vehiclePosition);
+    void covertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]);
 
     int minPix;
     double margin;
@@ -42,7 +45,7 @@ private:
     double ymPerPixel;
 
     cv::Mat binary;
-    cv::Mat OutImg;
+    cv::Mat outImg;
 
     int h;
     int w;

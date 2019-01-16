@@ -51,15 +51,26 @@ void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX) 
 }
 
 void Curves::nextY(const int w, int *lowY, int *highY) {
-
+    *lowY = this->h - (w + 1) * this->windowHeight;
+    *highY = this->h - w * this->windowHeight;
 }
 
-void Curves::nextX(const int current, int *leftX, int rightX) {
-
+void Curves::nextX(const int current, int *leftX, int *rightX) {
+    *leftX = current - this->margin;
+    *rightX = current + this->margin;
 }
 
-void Curves::nextMidX(const int pixelIndices[], int *current) {
-
+void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
+    int pixelIndicesLength = sizeof(pixelIndices) / sizeof(*pixelIndices);
+    if (pixelIndicesLength > this->minPix) {
+        int indexSum = 0;
+        for (int i = 0; i < pixelIndicesLength; i++) {
+            int currentPixelIndex = pixelIndices[i];
+            indexSum += this->allPixelsX[currentPixelIndex];
+        }
+        double meanIndexSum = double(indexSum) / pixelIndicesLength;
+        *currentIndex = round(meanIndexSum);
+    }
 }
 
 void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness) {

@@ -27,7 +27,7 @@ private:
     void storeDetails(const cv::Mat binary);
     void start(const cv::Mat binary, int *currentLeftX, int *currentRightX);
     void nextY(const int w, int *lowY, int *highY);
-    void nextX(const int current, int *leftX, int rightX);
+    void nextX(const int current, int *leftX, int *rightX);
     void nextMidX(const int pixelIndices[], int *current);
     void drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness = 5);
     void indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat);

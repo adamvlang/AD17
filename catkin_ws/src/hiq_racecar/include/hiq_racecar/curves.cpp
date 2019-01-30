@@ -32,7 +32,7 @@ void Curves::storeDetails(const cv::Mat binary){
     covertPointToArray(locations, this->allPixelsX, this->allPixelsY);
 }
 
-void Curves::covertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]){
+void Curves::convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]){
     int count = locations.size();
     int pixelsX[count] = {0};
     int pixelsY[count] = {0};
@@ -74,7 +74,7 @@ void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
 }
 
 void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness) {
-
+    cv::rectangle(this->outImg, p1, p2, color, thickness);
 }
 
 void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat) {

@@ -71,14 +71,55 @@ void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
         double meanIndexSum = double(indexSum) / pixelIndicesLength;
         *currentIndex = round(meanIndexSum);
     }
+
 }
+
+void start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
+    cv::Mat bottom_half = binary(cv::range(0, this->w), cv::range((int)this->h/2, this->h);
+    vector<int> hist = cv::reduce(bottom_half, cv::col_sum, 0, cv::REDUCE_SUM, cv::CV_32F);
+
+    int mid = (int)(hist.size() / 2);
+    int length = hist.size(); 
+    int indexRight = 0;
+    int indexLeft = 0;
+    int maxValue = 0;
+    
+    for(size_t i = 0; i < mid; i++)
+    {
+        int value = hist[i];
+        if (value > maxValue) {
+            indexLeft = i;
+            maxValue = value;
+        }
+    }
+
+    maxValue = 0;
+
+    for(size_t i = mid + 1 ; i < length; i++)
+    {
+        int value = hist[i];
+        if(value > maxValue){
+            indexRight = i;
+            maxValue = value;
+        }
+    }
+
+    *currentLeftX = indexLeft;
+    *currentRightX = indexRight;  
+}
+
 
 void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness) {
     cv::rectangle(this->outImg, p1, p2, color, thickness);
 }
 
 void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat) {
+    int numberOfPixels = sizeof(this->allPixelsX)/sizeof(*(this->allPixelsX)));
 
+    for (int i = 0; i < numberOfPixels; ) {
+        if (this->allPixelsX[i] > lowY)
+            returnMat[allPixelsX[i], allPixelsY[i]] = 1;
+    }
 }
 
 void Curves::pixelLocations(const int indices[], int allPixelsX[], int allPixelsY[]) {

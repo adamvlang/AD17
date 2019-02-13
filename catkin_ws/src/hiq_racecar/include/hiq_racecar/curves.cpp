@@ -114,10 +114,11 @@ void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv
 }
 
 void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat) {
-    int numberOfPixels = sizeof(this->allPixelsX)/sizeof(*(this->allPixelsX)));
+    int numberOfPixels = sizeof(this->allPixelsX)/sizeof(*(this->allPixelsX));
 
     for (int i = 0; i < numberOfPixels; ) {
-        if (this->allPixelsX[i] > lowY)
+        if (this->allPixelsX[i] >= leftX && this->allPixelsX[i] <= rightX &&
+            this->allPixelsY[i] >= lowY && this->allPixelsY[i] < highY)
             returnMat[allPixelsX[i], allPixelsY[i]] = 1;
     }
 }

@@ -3,6 +3,7 @@ catkin_ws/*
 !src
 *.swp
 .DS_Store
+ad17_2.creator.user
 
 # Prerequisites
 *.d

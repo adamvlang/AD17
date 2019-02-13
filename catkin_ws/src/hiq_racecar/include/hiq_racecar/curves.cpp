@@ -1,3 +1,45 @@
+/*M///////////////////////////////////////////////////////////////////////////////////////
+//
+//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//
+//  By downloading, copying, installing or using the software you agree to this license.
+//  If you do not agree to this license, do not download, install,
+//  copy or use the software.
+//
+//
+//                           License Agreement
+//                For Open Source Computer Vision Library
+//
+// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Third party copyrights are property of their respective owners.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+//   * Redistribution's of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//
+//   * Redistribution's in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//
+//   * The name of the copyright holders may not be used to endorse or promote products
+//     derived from this software without specific prior written permission.
+//
+// This software is provided by the copyright holders and contributors "as is" and
+// any express or implied warranties, including, but not limited to, the implied
+// warranties of merchantability and fitness for a particular purpose are disclaimed.
+// In no event shall the Intel Corporation or contributors be liable for any direct,
+// indirect, incidental, special, exemplary, or consequential damages
+// (including, but not limited to, procurement of substitute goods or services;
+// loss of use, data, or profits; or business interruption) however caused
+// and on any theory of liability, whether in contract, strict liability,
+// or tort (including negligence or otherwise) arising in any way out of
+// the use of this software, even if advised of the possibility of such damage.
+//
+//M*/
+
 #include "curves.h"
 
 using namespace std;
@@ -151,7 +193,12 @@ void Curves::plot(int t) {
 }
 
 void Curves::getRealCurvature(const int xs[], const int ys[], double coefficients[]) {
-
+    
+    for(size_t i = 0; i < sizeof(xs); i++)
+    {
+                        
+    }
+    
 }
 
 void Curves::radiusOfCurvature(const double y, const double coefficients[], double *radius) {
@@ -178,4 +225,27 @@ void Curves::updateVehiclePosition() {
 
 CurvesResult Curves::fit(cv::Mat binary) {
 
+}
+
+
+void polyfit(const cv::Mat& srcX, const cv::Mat& srcY, cv::Mat& dst, int order)
+{
+    cv::Mat X;
+    X = cv::Mat::zeros(srcX.rows, order+1, CV_32FC1);
+    cv::Mat copy;
+    for(int i = 0; i <=order;i++)
+    {
+        copy = srcX.clone();
+        cv::pow(copy,i,copy);
+        cv::Mat M1 = X.col(i);
+        copy.col(0).copyTo(M1);
+    }
+    cv::Mat X_t, X_inv;
+    cv::transpose(X, X_t);
+    cv::Mat temp = X_t*X;
+    cv::Mat temp2;
+    cv::invert (temp,temp2);
+    cv::Mat temp3 = temp2*X_t;
+    cv::Mat W = temp3*srcY;
+    W.copyTo(dst);
 }

@@ -136,9 +136,27 @@ void Curves::getRealCurvature(const int xs[], const int ys[], double coefficient
 }
 
 void Curves::radiusOfCurvature(const double y, const double coefficients[], double *radius) {
-
+    double f1Squared = pow(coefficients[1], 2);
+    double numinator = 1 + pow(2 * coefficients[0] * y + f1Squared, 1.5);
+    double denominator = fabs(2 * coefficients[0]);
+    *radius = numinator / denominator;
 }
 
-void Curves::updateVehiclePosition(double *vehiclePosition) {
+void Curves::updateVehiclePosition() {
+    int y = this->h;
+    int mid = (int) this->w / 2;
+    double kL[3];
+    double kR[3];
+    for (int i = 0; i < 3; i++) {
+        kL[i] = this->leftFitCurvePix[i];
+        kR[i] = this->rightFitCurvePix[i];
+    }
+    double xL = kL[0] * pow(y, 2) + kL[1] * y + kL[2];
+    double xR = kR[0] * pow(y, 2) + kR[1] * y + kR[2];
+    double pixPos = xL + (xR - xL) / 2.0;
+    this->vehiclePosition = (pixPos - mid) * this->xmPerPixel;
+}
+
+CurvesResult Curves::fit(cv::Mat binary) {
 
 }

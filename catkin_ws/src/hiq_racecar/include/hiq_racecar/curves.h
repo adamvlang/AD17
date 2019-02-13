@@ -9,6 +9,8 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/cudaarithm.hpp"
 
+#include <math.h>
+
 #include "helpers.h"
 
 using namespace std;
@@ -35,7 +37,7 @@ private:
     void plot(int t = 4);
     void getRealCurvature(const int xs[], const int ys[], double coefficients[]);
     void radiusOfCurvature(const double y, const double coefficients[], double *radius);
-    void updateVehiclePosition(double *vehiclePosition);
+    void updateVehiclePosition();
     void convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]);
 
     int minPix;

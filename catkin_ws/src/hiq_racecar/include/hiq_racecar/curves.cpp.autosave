@@ -148,6 +148,8 @@ void Curves::plot(int t) {
 
     double leftXs = kL[0] * pow(ys, 2) + kL[1] * ys + kL[2];
     double rightXs = kR[0] * pow(ys, 2) + kR[1] * ys + kR[2];
+    
+    
 }
 
 void Curves::getRealCurvature(const int xs[], const int ys[], double coefficients[]) {

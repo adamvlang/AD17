@@ -123,8 +123,24 @@ void Curves::indicesWithinBoundary(const int lowY, const int highY, const int le
     }
 }
 
-void Curves::pixelLocations(const int indices[], int allPixelsX[], int allPixelsY[]) {
+int* Curves::pixelLocationsX(const int indices[]) {
+    int length = sizeof(indices) / sizeof(indices[0]);
 
+    static int pixelsX[length];
+    for (int i = 0; i < length; i++) {
+        pixelsX[i] = this->allPixelsX[i];
+    }
+    return pixelsX;
+}
+
+int* Curves::pixelLocationsY(const int indices[]) {
+    int length = sizeof(indices) / sizeof(indices[0]);
+
+    static int pixelsY[length];
+    for (int i = 0; i < length; i++) {
+        pixelsY[i] = this->allPixelsY[i];
+    }
+    return pixelsY;
 }
 
 void Curves::plot(int t) {

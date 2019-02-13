@@ -29,7 +29,42 @@ void Curves::storeDetails(const cv::Mat binary){
     vector<cv::Point> locations;
     cv::findNonZero(binary, locations);
 
-    covertPointToArray(locations, this->allPixelsX, this->allPixelsY);
+    convertPointToArray(locations, this->allPixelsX, this->allPixelsY);
+}
+
+void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
+    cv::Mat bottom_half = binary(cv::Range(0, this->w), cv::Range((int)this->h/2, this->h));
+    vector<int> hist;
+    cv::reduce(bottom_half, hist, 0, cv::REDUCE_SUM); // TODO: Use CalcHist?
+
+    int mid = (int)(hist.size() / 2);
+    int length = hist.size();
+    int indexRight = 0;
+    int indexLeft = 0;
+    int maxValue = 0;
+
+    for(size_t i = 0; i < mid; i++)
+    {
+        int value = hist[i];
+        if (value > maxValue) {
+            indexLeft = i;
+            maxValue = value;
+        }
+    }
+
+    maxValue = 0;
+
+    for(size_t i = mid + 1 ; i < length; i++)
+    {
+        int value = hist[i];
+        if(value > maxValue){
+            indexRight = i;
+            maxValue = value;
+        }
+    }
+
+    *currentLeftX = indexLeft;
+    *currentRightX = indexRight;
 }
 
 void Curves::convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]){
@@ -44,10 +79,6 @@ void Curves::convertPointToArray(vector<cv::Point> locations, int allPixelsX[], 
 
     allPixelsX = pixelsX;
     allPixelsY = pixelsY;
-}
-
-void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX) {
-
 }
 
 void Curves::nextY(const int w, int *lowY, int *highY) {
@@ -74,41 +105,6 @@ void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
 
 }
 
-void start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
-    cv::Mat bottom_half = binary(cv::range(0, this->w), cv::range((int)this->h/2, this->h);
-    vector<int> hist = cv::reduce(bottom_half, cv::col_sum, 0, cv::REDUCE_SUM, cv::CV_32F);
-
-    int mid = (int)(hist.size() / 2);
-    int length = hist.size(); 
-    int indexRight = 0;
-    int indexLeft = 0;
-    int maxValue = 0;
-    
-    for(size_t i = 0; i < mid; i++)
-    {
-        int value = hist[i];
-        if (value > maxValue) {
-            indexLeft = i;
-            maxValue = value;
-        }
-    }
-
-    maxValue = 0;
-
-    for(size_t i = mid + 1 ; i < length; i++)
-    {
-        int value = hist[i];
-        if(value > maxValue){
-            indexRight = i;
-            maxValue = value;
-        }
-    }
-
-    *currentLeftX = indexLeft;
-    *currentRightX = indexRight;  
-}
-
-
 void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness) {
     cv::rectangle(this->outImg, p1, p2, color, thickness);
 }
@@ -119,28 +115,16 @@ void Curves::indicesWithinBoundary(const int lowY, const int highY, const int le
     for (int i = 0; i < numberOfPixels; ) {
         if (this->allPixelsX[i] >= leftX && this->allPixelsX[i] <= rightX &&
             this->allPixelsY[i] >= lowY && this->allPixelsY[i] < highY)
-            returnMat[allPixelsX[i], allPixelsY[i]] = 1;
+            returnMat.at<int>(allPixelsX[i], allPixelsY[i]) = 1;
     }
 }
 
-int* Curves::pixelLocationsX(const int indices[]) {
-    int length = sizeof(indices) / sizeof(indices[0]);
-
-    static int pixelsX[length];
+void Curves::pixelLocations(const int indices[], int pixelsX[], int pixelsY[], int length) {
     for (int i = 0; i < length; i++) {
-        pixelsX[i] = this->allPixelsX[i];
+        int index = indices[i];
+        pixelsX[i] = this->allPixelsX[index];
+        pixelsY[i] = this->allPixelsY[index];
     }
-    return pixelsX;
-}
-
-int* Curves::pixelLocationsY(const int indices[]) {
-    int length = sizeof(indices) / sizeof(indices[0]);
-
-    static int pixelsY[length];
-    for (int i = 0; i < length; i++) {
-        pixelsY[i] = this->allPixelsY[i];
-    }
-    return pixelsY;
 }
 
 void Curves::plot(int t) {

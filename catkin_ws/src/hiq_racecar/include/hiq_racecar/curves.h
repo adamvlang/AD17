@@ -31,8 +31,7 @@ private:
     void nextMidX(const int pixelIndices[], int *current);
     void drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness = 5);
     void indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat);
-    int* pixelLocationsX(const int indices[]);
-    int* pixelLocationsX(const int indices[]);
+    void pixelLocations(const int indices[], int pixelsX[], int pixelsY[], int length);
     void plot(int t = 4);
     void getRealCurvature(const int xs[], const int ys[], double coefficients[]);
     void radiusOfCurvature(const double y, const double coefficients[], double *radius);

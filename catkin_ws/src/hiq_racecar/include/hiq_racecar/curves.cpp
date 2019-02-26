@@ -170,8 +170,8 @@ void Curves::pixelLocations(const int indices[], int pixelsX[], int pixelsY[], i
 }
 
 void Curves::plot(int t) {
-    int lengthLeft = sizeof(this->leftPixelsX) / sizeof(this->leftPixelsX[0]);
-    int lengthRight = sizeof(this->rightPixelsX) / sizeof(this->rightPixelsX[0]);
+    int lengthLeft = leftPixelsX.rows;
+    int lengthRight = rightPixelsX.rows;
 
     polyfit(this->leftPixelsY, this->leftPixelsX, this->leftFitCurvePix, 2);
     polyfit(this->rightPixelsY, this->rightPixelsX, this->rightFitCurvePix, 2);
@@ -179,8 +179,8 @@ void Curves::plot(int t) {
     double kL[3];
     double kR[3];
     for (int i = 0; i < 3; i++) {
-        kL[i] = this->leftFitCurvePix[i];
-        kR[i] = this->rightFitCurvePix[i];
+        kL[i] = this->leftFitCurvePix.at<int>(0,i);
+        kR[i] = this->rightFitCurvePix.at<int>(0,i);
     }
 
     double ys[this->h];
@@ -188,17 +188,24 @@ void Curves::plot(int t) {
         ys[i] = i * ((this->h - 1) / this->h);
     }
 
-    double leftXs = kL[0] * pow(ys, 2) + kL[1] * ys + kL[2];
-    double rightXs = kR[0] * pow(ys, 2) + kR[1] * ys + kR[2];
+    double leftXs[lengthLeft];
+    for (int i = 0; i < lengthLeft; i++) {
+        leftXs[i] = kL[0] * pow(ys[i], 2.0) + kL[1] * ys[i] + kL[2];
+    }
+
+    double rightXs[lengthRight];
+    for (int i = 0; i < lengthRight; i++) {
+        rightXs[i] = kR[0] * pow(ys[i], 2.0) + kR[1] * ys[i] + kR[2];
+    }
+
+    // TODO: cv::line and stuff
 }
 
 void Curves::getRealCurvature(const int xs[], const int ys[], double coefficients[]) {
-    
     for(size_t i = 0; i < sizeof(xs); i++)
     {
-                        
+
     }
-    
 }
 
 void Curves::radiusOfCurvature(const double y, const double coefficients[], double *radius) {
@@ -214,8 +221,8 @@ void Curves::updateVehiclePosition() {
     double kL[3];
     double kR[3];
     for (int i = 0; i < 3; i++) {
-        kL[i] = this->leftFitCurvePix[i];
-        kR[i] = this->rightFitCurvePix[i];
+        kL[i] = this->leftFitCurvePix.at<double>(0,i);
+        kR[i] = this->rightFitCurvePix.at<double>(0,i);
     }
     double xL = kL[0] * pow(y, 2) + kL[1] * y + kL[2];
     double xR = kR[0] * pow(y, 2) + kR[1] * y + kR[2];
@@ -224,11 +231,11 @@ void Curves::updateVehiclePosition() {
 }
 
 CurvesResult Curves::fit(cv::Mat binary) {
-
+    // TODO: Do not forget to convert from array to cv::Mat when getting values back from pixelLocations()
 }
 
 
-void polyfit(const cv::Mat& srcX, const cv::Mat& srcY, cv::Mat& dst, int order)
+void Curves::polyfit(const cv::Mat& srcX, const cv::Mat& srcY, cv::Mat& dst, int order)
 {
     cv::Mat X;
     X = cv::Mat::zeros(srcX.rows, order+1, CV_32FC1);

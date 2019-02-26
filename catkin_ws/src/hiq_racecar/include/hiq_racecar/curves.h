@@ -39,7 +39,7 @@ private:
     void radiusOfCurvature(const double y, const double coefficients[], double *radius);
     void updateVehiclePosition();
     void convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]);
-    void polyfit(cv::Mat srcX, cv::Mat srcY, cv::Mat dst, int order);
+    void polyfit(const cv::Mat &srcX, const cv::Mat &srcY, cv::Mat &dst, int order);
 
     int minPix;
     double margin;
@@ -58,13 +58,13 @@ private:
     int allPixelsX[];
     int allPixelsY[];
 
-    cv::Mat leftPixelsX[];
-    cv::Mat rightPixelsX[];
-    cv::Mat leftPixelsY[];
-    cv::Mat rightPixelsY[];
+    cv::Mat leftPixelsX;
+    cv::Mat rightPixelsX;
+    cv::Mat leftPixelsY;
+    cv::Mat rightPixelsY;
 
-    cv::Mat leftFitCurvePix[];
-    cv::Mat rightFitCurvePix[];
+    cv::Mat leftFitCurvePix;
+    cv::Mat rightFitCurvePix;
     double leftFitCurveF[];
     double rightFitCurveF[];
 

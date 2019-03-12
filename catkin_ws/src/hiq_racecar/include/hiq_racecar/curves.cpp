@@ -188,17 +188,27 @@ void Curves::plot(int t) {
         ys[i] = i * ((this->h - 1) / this->h);
     }
 
-    double leftXs[lengthLeft];
+    double xls[lengthLeft];
     for (int i = 0; i < lengthLeft; i++) {
-        leftXs[i] = kL[0] * pow(ys[i], 2.0) + kL[1] * ys[i] + kL[2];
+        double leftXs = kL[0] * pow(ys[i], 2.0) + kL[1] * ys[i] + kL[2];
+        xls[i] = round(leftXs);
     }
 
-    double rightXs[lengthRight];
+    double xrs[lengthRight];
     for (int i = 0; i < lengthRight; i++) {
-        rightXs[i] = kR[0] * pow(ys[i], 2.0) + kR[1] * ys[i] + kR[2];
+        double rightXs = kR[0] * pow(ys[i], 2.0) + kR[1] * ys[i] + kR[2];
+        xrs[i] = round(rightXs);
     }
 
-    // TODO: cv::line and stuff
+    int stopIndex = min(lengthLeft, lengthRight);
+    stopIndex = min(stopIndex, this->h);
+    for (int i = 0; i < stopIndex; i++) {
+        int xl = xls[i];
+        int xr = xrs[i];
+        int y = ys[i];
+        cv::line(this->outImg, cv::Point(xl - t, y), cv::Point(xl + t, y), cv::Scalar(255, 255, 0), int(t/2));
+        cv::line(this->outImg, cv::Point(xr - t, y), cv::Point(xr + t, y), cv::Scalar(0, 0, 255), int(t/2));
+    }
 }
 
 void Curves::getRealCurvature(const int xs[], const int ys[], double coefficients[]) {

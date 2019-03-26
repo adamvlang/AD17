@@ -151,13 +151,13 @@ void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv
     cv::rectangle(this->outImg, p1, p2, color, thickness);
 }
 
-void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, cv::Mat returnMat) {
+void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, std::vector returnVector) {
     int numberOfPixels = sizeof(this->allPixelsX)/sizeof(*(this->allPixelsX));
-
     for (int i = 0; i < numberOfPixels; ) {
         if (this->allPixelsX[i] >= leftX && this->allPixelsX[i] <= rightX &&
-            this->allPixelsY[i] >= lowY && this->allPixelsY[i] < highY)
-            returnMat.at<int>(allPixelsX[i], allPixelsY[i]) = 1;
+            this->allPixelsY[i] >= lowY && this->allPixelsY[i] < highY){
+            returnVector.push_back(allPixelsX[i]);
+        }
     }
 }
 
@@ -211,11 +211,8 @@ void Curves::plot(int t) {
     }
 }
 
-void Curves::getRealCurvature(const int xs[], const int ys[], double coefficients[]) {
-    for(size_t i = 0; i < sizeof(xs); i++)
-    {
-
-    }
+void Curves::getRealCurvature(const cv::Mat xs[], const cv::Mat ys[], cv::Mat coefficients[]) {
+    polyfit(xs, ys, coeffcients, 2);
 }
 
 void Curves::radiusOfCurvature(const double y, const double coefficients[], double *radius) {
@@ -242,6 +239,50 @@ void Curves::updateVehiclePosition() {
 
 CurvesResult Curves::fit(cv::Mat binary) {
     // TODO: Do not forget to convert from array to cv::Mat when getting values back from pixelLocations()
+    storeDetails(binary);
+    int mid_left_x, mid_right_x;
+    start(const cv::Mat binary, mid_left_x, mid_right_x);
+
+    int y_low, y_high;
+    int x_left_low, x_left_high;
+    int x_right_low, x_right_high:
+
+    std::vector<int> left_pixels_indicies;
+    std::vector<int> right_pixels_indicies;
+
+    for(size_t i = 0; i < this->n; i++)
+    {
+        nextY(i, y_low, y_high)
+        nextX(mid_left_x, x_left_low, x_left_high)
+        nextX(mid_right_x , x_right_low, x_right_high)
+        
+        cv::Point2f corner1 = new Point2f(x_left_low, y_low);
+        cv::Point2f corner2 = new Point2f(x_left_high, y_high);
+
+        cv::Point2f corner3 = new Point2f(x_right_low, y_low);
+        cv::Point2f corner4 = new Point2f(x_right_high, y_high);
+        
+        drawBoundaries(corner1, corner2, new cv::Scalar(255,0,0))
+        drawBoundaries(corner3, corner4, new cv::Scalar(0,255,0))
+        
+        std::vector<int> current_left_pixels_indicies;
+        std::vector<int> current_right_pixels_indicies;
+        indicesWithinBoundary(y_low, y_high, x_left_low, x_left_high, current_left_pixels_indicies);
+        indicesWithinBoundary(y_low, y_high, x_left_low, x_left_high, current_right_pixels_indicies);
+
+        left_pixels_indicies.insert(left_pixel_indicies.end(), current_left_pixels_indicies.begin(), current_left_pixels_indicies.end());
+        right_pixels_indicies.insert(right_pixel_indicies.end(), current_right_pixels_indicies.begin(), current_right_pixels_indicies.end());
+
+        int* current_left_pixels_array = &current_left_pixels_indicies[0];
+        int* current_right_pixels_array = &current_right_pixels_indicies[0];
+        nextMidX(current_left_pixels_indicies, mid_left_x);
+        nextMidX(current_right_pixels_indicies, mid_right_x);
+    }
+
+    pixelLocations(left_pixels_indicies, this->leftPixelsX, this->leftPixelsY, left_pixels_indicies.size());
+    pixelLocations(left_pixels_indicies, this->leftPixelsX, this->leftPixelsY, left_pixels_indicies.size());
+    
+
 }
 
 

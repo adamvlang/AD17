@@ -32,11 +32,11 @@ private:
     void nextX(const int current, int *leftX, int *rightX);
     void nextMidX(const int pixelIndices[], int *current);
     void drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv::Scalar& color, int thickness = 5);
-    void indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, std::Vector returnVector);
-    void pixelLocations(const int indices[], int pixelsX[], int pixelsY[], int length);
+    void indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, vector<int> returnVector);
+    void pixelLocations(const vector<int> indices, cv::Mat pixelsX, cv::Mat pixelsY, int length);
     void plot(int t = 4);
-    void getRealCurvature(const int xs[], const int ys[], double coefficients[]);
-    void radiusOfCurvature(const double y, const double coefficients[], double *radius);
+    void getRealCurvature(cv::Mat xs, cv::Mat ys, cv::Mat coefficients);
+    void radiusOfCurvature(const double y, const cv::Mat coefficients, double *radius);
     void updateVehiclePosition();
     void convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]);
     void polyfit(const cv::Mat &srcX, const cv::Mat &srcY, cv::Mat &dst, int order);
@@ -65,8 +65,8 @@ private:
 
     cv::Mat leftFitCurvePix;
     cv::Mat rightFitCurvePix;
-    double leftFitCurveF[];
-    double rightFitCurveF[];
+    cv::Mat leftFitCurveF;
+    cv::Mat rightFitCurveF;
 
     double leftRadius;
     double rightRadius;

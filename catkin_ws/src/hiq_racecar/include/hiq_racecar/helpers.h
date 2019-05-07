@@ -20,10 +20,10 @@ struct CurvesResult {
     cv::Mat image;
     double leftRadius;
     double rightRadius;
-    double leftFitCurvePix[];
-    double rightFitCurvePix[];
-    double leftFitCurveF[];
-    double rightFitCurveF[];
+    cv::Mat leftFitCurvePix;
+    cv::Mat rightFitCurvePix;
+    cv::Mat leftFitCurveF;
+    cv::Mat rightFitCurveF;
     double vehiclePosition;
 };
 

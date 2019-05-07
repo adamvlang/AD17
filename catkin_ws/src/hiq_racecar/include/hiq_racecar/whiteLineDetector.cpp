@@ -34,7 +34,7 @@ WhiteLineDetector::WhiteLineDetector() {
     int minimumPixels = 50;
     double ymPerPixel = 30.0 / 720;
     double xmPerPixel = 3.7 / 720;
-    //TODO: curves = TODO: Curves(numberOfWindows, margin, minimumPixels, ymPerPixel, xmPerPixel);
+    curves = Curves(numberOfWindows, margin, minimumPixels, ymPerPixel, xmPerPixel);
 }
 
 
@@ -45,49 +45,67 @@ PipelineOutput WhiteLineDetector::pipeLine(cv_bridge::CvImagePtr imagePtr) {
 
 
 PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat source_image) {
-//    TODO
-//    cv::Mat imageRaw = image->image;
-      cv::Mat skyViewImage = cv::Mat::zeros(source_image.size(), source_image.type());
-      //birdsEye.undistort_image(&source_image, &undistortedImage);
-      //cv::imshow("Undistorted", undistortedImage);
-      //cv::waitKey(0);
       cv::imshow("Source image", source_image);
       cv::waitKey(0);
-      cv::Mat imageBinary = laneFilter.apply(source_image);
+
+      cv::Mat emptyImage = cv::Mat::zeros(source_image.size(), source_image.type());
+
+//      cv::Mat undistortedImage;
+//      birdsEye.undistort_image(&source_image, &undistortedImage);
+//      cv::imshow("Undistorted", undistortedImage);
+//      cv::waitKey(0);
+
+      cv::Mat imageBinary = laneFilter.apply(/*undistortedImage*/source_image);
       cv::imshow("Lane filter", imageBinary);
       cv::waitKey(0);
+
+      cv::Mat skyViewImage;
       birdsEye.skyView(imageBinary, &skyViewImage);
       cv::imshow("Sky view", skyViewImage);
       cv::waitKey(0);
+
       cv::Mat imageWb = skyViewImage & regionOfInterest(imageBinary, 125, 1200);
       cv::imshow("imageWB", imageWb);
       cv::waitKey(0);
-//    Curves::CurvesFitOutput result = curves->fit(imageWb);
-//    cv::Mat imageGroundWithProjection = birdsEye.project(groundImage, imageBinary);
 
-//    std::string textPos = "vehicle position: " + result.vehiclePosition;
-//    stringstream streamLeft;
-//    streamLeft << fixed << setprecision(2) << result.radiusLeft;
-//    std::string textLeft = "left radius: " + streamLeft.str();
-//    stringstream streamRight;
-//    streamRight << fixed << setprecision(2) << result.radiusLeft;
-//    std::string textRight = "left radius: " + streamRight.str();
+      CurvesResult result = curves.fit(imageWb);
+      double coeffLeft[3];
+      double coeffRight[3];
+      for (int i = 0; i < 3; i++) {
+          coeffLeft[i] = result.leftFitCurveF.at<double>(0,i);
+          coeffRight[i] = result.rightFitCurveF.at<double>(0,i);
+      }
+      cv::Scalar color = cv::Scalar(0,0,255,255);
+      cv::Mat imageGroundWithProjection;
+      birdsEye.project(source_image, &imageGroundWithProjection, coeffLeft, coeffRight, &color);
+      cv::imshow("imageGroundWithProjection", imageWb);
+      cv::waitKey(0);
 
-//    cv::putText(imageGroundWithProjection, textLeft, cv::Point2f(20,40), FONT_HERSHEY_COMPLEX, 1,  Scalar(0,0,255,255));
-//    cv::putText(imageGroundWithProjection, textRight, cv::Point2f(400,40), FONT_HERSHEY_COMPLEX, 1,  Scalar(0,0,255,255));
-//    cv::putText(imageGroundWithProjection, textPos, cv::Point2f(20,80), FONT_HERSHEY_COMPLEX, 1,  Scalar(0,0,255,255));
+      stringstream streamPos;
+      streamPos << fixed << setprecision(2) << result.vehiclePosition;
+      std::string textPos = "vehicle position: " + streamPos.str();
+      stringstream streamLeft;
+      streamLeft << fixed << setprecision(2) << result.leftRadius;
+      std::string textLeft = "left radius: " + streamLeft.str();
+      stringstream streamRight;
+      streamRight << fixed << setprecision(2) << result.rightRadius;
+      std::string textRight = "right radius: " + streamRight.str();
 
-//    PipelineOutput output = {imageGroundWithProjection,
-//                             result.vehiclePosition,
-//                             result.radiusLeft,
-//                             result.radiusRight};
+      cv::putText(imageGroundWithProjection, textLeft, cv::Point2f(20,40), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0,0,255,255));
+      cv::putText(imageGroundWithProjection, textRight, cv::Point2f(400,40), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0,0,255,255));
+      cv::putText(imageGroundWithProjection, textPos, cv::Point2f(20,80), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0,0,255,255));
 
-//    return output;
+      PipelineOutput output = {imageGroundWithProjection,
+                               result.vehiclePosition,
+                               result.leftRadius,
+                               result.rightRadius};
+
+      return output;
 
 
-PipelineOutput output = {source_image,
-                             0,
-                             0,
-                             0};
-    return output;
+//      PipelineOutput output = {source_image,
+//                                   0,
+//                                   0,
+//                                   0};
+//          return output;
 }

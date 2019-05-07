@@ -24,5 +24,5 @@ public:
 
 	void skyView(const cv::Mat ground_image, cv::Mat* output_image);
 
-    void project(cv::Mat ground_image, cv::Mat* output_image, double left_fit[3], double right_fit[3], cv::Scalar *color);
+    void project(cv::Mat ground_image, cv::Mat* output_image, double* left_fit, double* right_fit, cv::Scalar *color);
 };

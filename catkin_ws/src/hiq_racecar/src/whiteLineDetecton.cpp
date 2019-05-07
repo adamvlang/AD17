@@ -8,7 +8,7 @@
 // TODO: Make ros happen here
 
 int main() {
-    cv::Mat warpedImage = cv::imread("/home/polestar/", CV_LOAD_IMAGE_COLOR);
+    cv::Mat warpedImage = cv::imread("/home/nvidia/ad17/catkin_ws/src/hiq_racecar/include/hiq_racecar/test1.jpg", CV_LOAD_IMAGE_COLOR);
 
     WhiteLineDetector whiteLineDetector = WhiteLineDetector();
 

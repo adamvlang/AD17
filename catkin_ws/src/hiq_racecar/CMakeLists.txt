@@ -3,6 +3,8 @@ project(hiq_racecar)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
  add_compile_options(-std=c++11)
+ add_compile_options(-fsanitize=leak)
+ add_compile_options(-fsanitize=memory)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)

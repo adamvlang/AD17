@@ -1,10 +1,13 @@
 #include "helpers.h"
 
 cv::Mat regionOfInterest(cv::Mat imageGray, int mn = 125, int mx = 1200) {
-	cv::Mat m(imageGray);
+    cv::Mat m = cv::Mat::zeros(imageGray.size(), imageGray.type());
+    m(cv::Range::all(), cv::Range(mn, mx)) += cv::Scalar(200);
+    return m;
+    /*cv::Mat m(imageGray);
 	m += cv::Scalar(1);
     m = m(cv::Range::all(), cv::Range(mn,mx));
-	return m;
+    return m;*/
 }
 
 /* The original python function

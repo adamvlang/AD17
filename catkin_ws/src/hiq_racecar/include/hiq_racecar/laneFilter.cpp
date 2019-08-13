@@ -93,7 +93,8 @@ cv::Mat LaneFilter::applyColorMask() {
     cv::Mat colorCond1or2;
     cv::bitwise_or(colorCond1, colorCond2, colorCond1or2);
     cv::Mat b = z.clone();
-    b.setTo(1, colorCond1or2);
+    //b.setTo(1, colorCond1or2);
+    b = z | colorCond1or2;
 
     return b;
 }
@@ -110,7 +111,7 @@ cv::Mat LaneFilter::applySobelMask() {
     cv::Mat magL = lx.clone();
     for (int col = 0; col < gradL.cols; col++) {
         for (int row = 0; row < gradL.rows; row++) {
-            gradL.at<double>(row, col) = atan2(ly.at<double>(row, col), lx.at<double>(row, col)) * 180 / PI;
+            gradL.at<double>(row, col) = atan2(ly.at<double>(row, col), lx.at<double>(row, col));
             magL.at<double>(row, col) = pow(lx.at<double>(row, col), 2) + pow(ly.at<double>(row, col), 2);
         }
     }
@@ -127,7 +128,8 @@ cv::Mat LaneFilter::applySobelMask() {
     cv::Mat sobelCond1and2and3;
     cv::bitwise_and(sobelCond1, sobelCond2, sobelCond1and2);
     cv::bitwise_and(sobelCond1and2, sobelCond3, sobelCond1and2and3);
-    b.setTo(1, sobelCond1and2and3);
+    //b.setTo(1, sobelCond1and2and3);
+    b = z | sobelCond1and2and3;
 
     return b;
 }

@@ -44,7 +44,7 @@
 
 using namespace std;
 
-Curves::Curves(int numberOfWindows, double margin, int minPix, double ymPerPixel, double xmPerPixel) {
+Curves::Curves(int numberOfWindows, int margin, int minPix, double ymPerPixel, double xmPerPixel) {
     this->minPix = minPix;
     this->margin = margin;
     this->numberOfWindows = numberOfWindows;
@@ -75,10 +75,9 @@ void Curves::storeDetails(const cv::Mat binary){
 }
 
 void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
-    cv::Mat bottom_half = binary(cv::Range(0, this->w), cv::Range((int)this->h/2, this->h));
+    cv::Mat bottom_half = binary(cv::Range((int)(this->h/2), this->h), cv::Range(0, this->w));
     vector<int> hist;
-    cv::reduce(bottom_half, hist, 0, cv::REDUCE_SUM); // TODO: Use CalcHist?
-
+    cv::reduce(bottom_half, hist, 0, cv::REDUCE_SUM); // TODO: Use CalcHist? No!
     int mid = (int)(hist.size() / 2);
     int length = hist.size();
     int indexRight = 0;
@@ -129,8 +128,13 @@ void Curves::nextY(const int w, int *lowY, int *highY) {
 }
 
 void Curves::nextX(const int current, int *leftX, int *rightX) {
+    printf("current is %i\n", current);
+    printf("leftX is %i\n", *leftX);
+    printf("rightX is %i\n", *rightX);
+    printf("margin is %i\n", this->margin);
+    *rightX = 369 + 100;//current + this->margin;
+    printf("I calculated rightX\n");
     *leftX = current - this->margin;
-    *rightX = current + this->margin;
 }
 
 void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
@@ -242,19 +246,25 @@ CurvesResult Curves::fit(cv::Mat binary) {
     storeDetails(binary);
     int *mid_left_x, *mid_right_x;
     start(binary, mid_left_x, mid_right_x);
-
+    printf("I started and mid_left_x is %i\n", *mid_left_x);
     int *y_low, *y_high;
     int *x_left_low, *x_left_high;
     int *x_right_low, *x_right_high;
-
+    *y_low = 1;
+    *y_high = 1;
+    *x_left_low = 1;
     vector<int> left_pixels_indicies;
     vector<int> right_pixels_indicies;
+    printf("I initialized\n");
 
     for(size_t i = 0; i < this->numberOfWindows; i++)
     {
         nextY(i, y_low, y_high);
+        printf("I calculated nextY\n");
         nextX(*mid_left_x, x_left_low, x_left_high);
+        printf("I calculated nextX 1\n");
         nextX(*mid_right_x , x_right_low, x_right_high);
+        printf("I calculated nextX 2\n");
         
         cv::Point2f corner1 = cv::Point2f(*x_left_low, *y_low);
         cv::Point2f corner2 = cv::Point2f(*x_left_high, *y_high);
@@ -264,11 +274,13 @@ CurvesResult Curves::fit(cv::Mat binary) {
         
         drawBoundaries(corner1, corner2, cv::Scalar(255,0,0));
         drawBoundaries(corner3, corner4, cv::Scalar(0,255,0));
+        printf("I drew boundaries\n");
         
         vector<int> current_left_pixels_indicies;
         vector<int> current_right_pixels_indicies;
         indicesWithinBoundary(*y_low, *y_high, *x_left_low, *x_left_high, current_left_pixels_indicies);
         indicesWithinBoundary(*y_low, *y_high, *x_left_low, *x_left_high, current_right_pixels_indicies);
+        printf("I got indices within boundary\n");
 
         left_pixels_indicies.insert(left_pixels_indicies.end(), current_left_pixels_indicies.begin(), current_left_pixels_indicies.end());
         right_pixels_indicies.insert(right_pixels_indicies.end(), current_right_pixels_indicies.begin(), current_right_pixels_indicies.end());

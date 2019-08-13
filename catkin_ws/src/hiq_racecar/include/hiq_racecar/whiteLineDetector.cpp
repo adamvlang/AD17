@@ -69,6 +69,7 @@ PipelineOutput WhiteLineDetector::pipeLineWithImage(cv::Mat source_image) {
       cv::waitKey(0);
 
       CurvesResult result = curves.fit(imageWb);
+      printf("result left radius: %f", result.leftRadius);
       double coeffLeft[3];
       double coeffRight[3];
       for (int i = 0; i < 3; i++) {

@@ -19,7 +19,7 @@ class Curves {
 public:
     Curves();
     Curves(int numberOfWindows,
-           double margin,
+           int margin,
            int minPix,
            double ymPerPixel,
            double xmPerPixel);
@@ -42,7 +42,7 @@ private:
     void polyfit(const cv::Mat &srcX, const cv::Mat &srcY, cv::Mat &dst, int order);
 
     int minPix;
-    double margin;
+    int margin;
     int numberOfWindows;
     double xmPerPixel;
     double ymPerPixel;

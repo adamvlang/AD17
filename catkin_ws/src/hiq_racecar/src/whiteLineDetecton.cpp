@@ -9,6 +9,7 @@
 
 int main() {
     cv::Mat warpedImage = cv::imread("/home/nvidia/ad17/catkin_ws/src/hiq_racecar/include/hiq_racecar/test2.jpg", CV_LOAD_IMAGE_COLOR);
+    //cv::Mat warpedImage = cv::imread("/home/nvidia/ad17/catkin_ws/src/hiq_racecar/include/hiq_racecar/imageForCurves.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
     WhiteLineDetector whiteLineDetector = WhiteLineDetector();
 

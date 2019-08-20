@@ -38,7 +38,7 @@ private:
     void getRealCurvature(cv::Mat xs, cv::Mat ys, cv::Mat coefficients);
     void radiusOfCurvature(const double y, const cv::Mat coefficients, double *radius);
     void updateVehiclePosition();
-    void convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]);
+    void convertPointToArray(vector<cv::Point> locations);
     void polyfit(const cv::Mat &srcX, const cv::Mat &srcY, cv::Mat &dst, int order);
 
     int minPix;
@@ -55,8 +55,8 @@ private:
     int windowHeight;
     int mid;
 
-    int allPixelsX[];
-    int allPixelsY[];
+    vector<int> allPixelsX;
+    vector<int> allPixelsY;
 
     cv::Mat leftPixelsX;
     cv::Mat rightPixelsX;

@@ -71,7 +71,7 @@ void Curves::storeDetails(const cv::Mat binary){
     vector<cv::Point> locations;
     cv::findNonZero(binary, locations);
 
-    convertPointToArray(locations, this->allPixelsX, this->allPixelsY);
+    convertPointToArray(locations);
 }
 
 void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
@@ -108,18 +108,17 @@ void Curves::start(const cv::Mat binary, int *currentLeftX, int *currentRightX){
     *currentRightX = indexRight;
 }
 
-void Curves::convertPointToArray(vector<cv::Point> locations, int allPixelsX[], int allPixelsY[]){
+void Curves::convertPointToArray(vector<cv::Point> locations){
     int count = locations.size();
-    int pixelsX[count] = {0};
-    int pixelsY[count] = {0};
+    this->allPixelsY.clear();
+    this->allPixelsX.clear();
+    vector<int> allPixelsX(count, 0);
+    vector<int> allPixelsY(count, 0);
     for(int i = 0; i < count; i++) {
         cv::Point point = locations[i];
-        pixelsX[i] = point.x;
-        pixelsY[i] = point.y;
+        allPixelsX.at(i) = point.x;
+        allPixelsY.at(i) = point.y;
     }
-
-    allPixelsX = pixelsX;
-    allPixelsY = pixelsY;
 }
 
 void Curves::nextY(const int w, int *lowY, int *highY) {
@@ -143,7 +142,7 @@ void Curves::nextMidX(const int pixelIndices[], int *currentIndex) {
         int indexSum = 0;
         for (int i = 0; i < pixelIndicesLength; i++) {
             int currentPixelIndex = pixelIndices[i];
-            indexSum += this->allPixelsX[currentPixelIndex];
+            indexSum += this->allPixelsX.at(currentPixelIndex);
         }
         double meanIndexSum = double(indexSum) / pixelIndicesLength;
         *currentIndex = round(meanIndexSum);
@@ -156,11 +155,11 @@ void Curves::drawBoundaries(const cv::Point2f p1, const cv::Point2f p2, const cv
 }
 
 void Curves::indicesWithinBoundary(const int lowY, const int highY, const int leftX, const int rightX, vector<int> returnVector) {
-    int numberOfPixels = sizeof(this->allPixelsX)/sizeof(*(this->allPixelsX));
+    int numberOfPixels = allPixelsX.size();
     for (int i = 0; i < numberOfPixels; ) {
-        if (this->allPixelsX[i] >= leftX && this->allPixelsX[i] <= rightX &&
-            this->allPixelsY[i] >= lowY && this->allPixelsY[i] < highY){
-            returnVector.push_back(allPixelsX[i]);
+        if (this->allPixelsX.at(i) >= leftX && this->allPixelsX.at(i) <= rightX &&
+            this->allPixelsY.at(i) >= lowY && this->allPixelsY.at(i) < highY){
+            returnVector.push_back(allPixelsX.at(i));
         }
     }
 }
@@ -168,8 +167,8 @@ void Curves::indicesWithinBoundary(const int lowY, const int highY, const int le
 void Curves::pixelLocations(const vector<int> indices, cv::Mat pixelsX, cv::Mat pixelsY, int length) {
     for (int i = 0; i < length; i++) {
         int index = indices[i];
-        pixelsX.at<int>(0,i) = this->allPixelsX[index];
-        pixelsY.at<int>(0,i) = this->allPixelsY[index];
+        pixelsX.at<int>(0,i) = this->allPixelsX.at(index);
+        pixelsY.at<int>(0,i) = this->allPixelsY.at(index);
     }
 }
 
@@ -242,6 +241,7 @@ void Curves::updateVehiclePosition() {
 }
 
 CurvesResult Curves::fit(cv::Mat binary) {
+    printf("Nu kör vi!\n");
     // TODO: Do not forget to convert from array to cv::Mat when getting values back from pixelLocations()
     storeDetails(binary);
     int *mid_left_x, *mid_right_x;
